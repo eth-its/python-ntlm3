@@ -54,7 +54,8 @@ class AbstractNtlmAuthHandler:
                 # ntlm secures a socket, so we must use the same socket for the complete handshake
             headers = dict(req.headers)
             headers.update(req.unredirected_hdrs)
-            auth = 'NTLM %s' % ntlm.create_NTLM_NEGOTIATE_MESSAGE(user, type1_flags)
+            auth = ('NTLM %s' % ntlm.create_NTLM_NEGOTIATE_MESSAGE(
+                    user, type1_flags).decode('utf-8'))
             if req.headers.get(self.auth_header, None) == auth:
                 return None
             headers[self.auth_header] = auth
@@ -99,13 +100,13 @@ class AbstractNtlmAuthHandler:
 
             # some Exchange servers send two WWW-Authenticate headers, one with the NTLM challenge
             # and another with the 'Negotiate' keyword - make sure we operate on the right one
-            m = re.match('(NTLM [A-Za-z0-9+\-/=]+)', auth_header_value)
+            m = re.match(r'(NTLM [A-Za-z0-9+\-/=]+)', auth_header_value)
             if m:
                 auth_header_value, = m.groups()
 
             (ServerChallenge, NegotiateFlags) = ntlm.parse_NTLM_CHALLENGE_MESSAGE(auth_header_value[5:])
-            auth = 'NTLM %s' % ntlm.create_NTLM_AUTHENTICATE_MESSAGE(ServerChallenge, UserName, DomainName, pw,
-                                                                     NegotiateFlags)
+            auth = 'NTLM %s' % ntlm.create_NTLM_AUTHENTICATE_MESSAGE(
+                    ServerChallenge, UserName, DomainName, pw, NegotiateFlags).decode('utf-8')
             headers[self.auth_header] = auth
             headers["Connection"] = "Close"
             headers = dict((name.title(), val) for name, val in headers.items())

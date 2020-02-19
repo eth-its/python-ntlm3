@@ -17,3 +17,8 @@ Initial public offering.
 * Bugfix for windows (thanks to @rbcarson for the help)
 * Added Appveyor continous integration testing on Windows to avoid these problems in future
 
+1.0.3 (Feb 19, 2020)
+-------------------
+
+* Bugfix for python 3.7 - decode AUTH headers
+
